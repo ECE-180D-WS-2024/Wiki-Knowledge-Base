@@ -37,10 +37,6 @@ The process of sending and acknowledging is a continuous process that ensures th
 
 <img src="https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/christophe/img6.png">
 
-There is also a similar meticulous protocol to terminate a TCP connection (Figure ).
- 
-[INSERT IMAGE]
-
 In contrast, UDP is a connectionless oriented protocol that is much simpler than TCP as it requires no three way handshake, no sequence numbering and no acknowledgments for data received. Essentially UDP packages and sends the data without care about what happens next. While UDP has methods to check whether data is corrupted or not, there is no protocol to solve issues like packets being ordered incorrectly or lost.
 
 ## TCP and UDP Structures 
