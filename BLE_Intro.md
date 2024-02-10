@@ -85,7 +85,7 @@ Note that some BLE devices can act as multiple of these roles, depending on the 
 
 For this tutorial, you will need an `Arduino Nano 33 IOT` with USB Micro B cable and a laptop capable of BLE. We will be using the Arduino IDE.
 
-1. Open the boards manager (Tools->Board->Board Manager) and search for the Arduino Nano 33 IOT to find and download the appropriate board manager.
+1. In the Arduino IDE, open the boards manager (Tools->Board->Board Manager) and search for the Arduino Nano 33 IOT to find and download the appropriate board manager.
 2. Open the library manager (Tools->Manage Libraries) and searcxh for and download the `ArduinoBLE` and `Arduino_LSM6DS3` libraries.
 3. Now we will create a new sketch, and include these libraries and define some constants for the UUID of our service and characteristics:
 
@@ -197,7 +197,7 @@ void loop()
 }
 ```
 
-7. Now we will simply upload this by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
+7. Now we will upload this by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
 
 8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop. Begin by installing `node.js` on your laptop.
 
@@ -213,7 +213,7 @@ npm init -y
 npm install @abandonware/noble
 ```
 
-11. Now we will begin writing our node.js code. Create a file called `central.js` in the project directory. We will begin by requiring the noble moudle, and defining some constants to be used later:
+11. Now we will begin writing our node.js code. Create a file called `central.js` in the project directory. We will begin by requiring the noble module, and defining some constants to be used later:
 
 ```js
 const noble = require('@abandonware/noble');
