@@ -1,11 +1,11 @@
-## Understanding UDP vs. TCP for Network Programming: Structures, Applications, and Performance Considerations
+# Understanding UDP vs. TCP for Network Programming: Structures, Applications, and Performance Considerations
 
-# Introduction
+## Introduction
 
 When exploring online you may think that every website you visit or email you send is just part of the unlimited access that your device has to the internet. However, every digital interaction and byte of data transferred over a network has to abide by a working set of rules. The Transmission Control Protocol/Internet Protocol (TCP/IP) serves as this governance through a suite of communication protocols used to interconnect network devices on the internet [1]. This protocol involves the handling of how data is broken down, addressed, transmitted, routed and received over a network [1]. We will focus on comparing two protocols within the Transport Layer of TCP/IP— Transfer Control Protocol (TCP) and User Datagram Protocol (UDP). This examination will be both qualitative and technical through providing network theory along with insight into the data structures used. (coding guide for network programming in Python.)
 
 
-# Background on TCP/IP Model
+## Background on TCP/IP Model
 
 The TCP/IP model is part of every network domain to oversee transmission of data so that it is both efficient and potentially error free. This Internet Protocol Suite was first developed as a way to connect computers within the same network across different countries. The TCP/IP model consists of four “layers” that performs a specific function on the data transmission from start to finish. These layers are divided into Application, Transport, Internet and Network Interface. 
 
@@ -16,16 +16,16 @@ The application layer is responsible for understanding the type of data being us
 The TCP/IP model involves communication between two parties, the client and the server. The interaction is that a client (often the user machine) is provided a service, like access to a file by a server in the network (another computer). When you type an address to a website (i.e https://www.youtube.com/) the browser first goes to the DNS server where it finds the IP address the website is, then the browser sends HTTP request message to the server to send a copy of the website to your device. After this, if the server approves the message it will send the client back an approval notice and then start to send small packets of data that your browser begins to assemble and display for you [3]. All of this is accomplished over the internet connection established by TCP/IP.
 
 
-# Methods of TCP and UDP
+## Methods of TCP and UDP
 
 The Transfer Control Protocol (TCP) and the User Datagram Protocol (UDP) are the two primary protocols that make up the transport layer of the TCP/IP model. Given the type of communication an application will choose one or the other for end-to-end connectivity with the server. 
 
 TCP is a connection oriented protocol that provides reliable transmission of data through a certain set of parameters that are agreed upon by client and the server before this connection is established [5]. 
 
 To establish a connection, there is a three way handshake (Figure _):
-Host A must send a synchronize (SYN) message to Host B
-Host B responds with an acknowledgment (ACK) message along with a SYN message
-Host A responds to the SYN message with its own ACK message
+  1. Host A must send a synchronize (SYN) message to Host B
+  2. Host B responds with an acknowledgment (ACK) message along with a SYN message
+  3. Host A responds to the SYN message with its own ACK message
 
 From this point on there is a bidirectional state of communication between the two hosts (client and server). Once this connection is established data can now be exchanged over the network. Regardless of the size of the data, the TCP divides the data into smaller packets and assigns a sequence number so that it can be built back after being received. This sequencing also helps with identifying lost packets to ensure that they are sent again. The size of these packets are decided by the receiving host's TCP window size as a measure of flow control to prevent buffering.[5] 
 
@@ -39,7 +39,7 @@ There is also a similar meticulous protocol to terminate a TCP connection (Figur
 
 In contrast, UDP is a connectionless oriented protocol that is much simpler than TCP as it requires no three way handshake, no sequence numbering and no acknowledgments for data received. Essentially UDP packages and sends the data without care about what happens next. While UDP has methods to check whether data is corrupted or not, there is no protocol to solve issues like packets being ordered incorrectly or lost.
 
-# TCP and UDP Structures 
+## TCP and UDP Structures 
 
 Because there are countless applications that can be used on a given client, both TCP and UDP use port numbers to identify the type of service being requested for a given client or server. A device's IP address in combination with a port number is known as a socket. This allows different network services to operate on the same device. Thus, when a server receives a packet, the port number is what tells the transport layer what application to transfer the packet [5].
 
