@@ -1,6 +1,6 @@
 # Bluetooth Low Energy
 
-## Introduction
+## DS3
 
 Bluetooth Low Energy (BLE) [[1](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/)] is a short-range wireless technology standard focusing on low-power devices. While it may not have the data throughput or range of its predecessor, Bluetooth Classic, it excels at maintaining low power usage, enabling it to be used much more easily with mobile and IOT devices.
 
@@ -78,3 +78,115 @@ The different roles of a Bluetooth LE device are:
 + Peripheral: a device that Advertises and accepts Connections from Central devices. In our tutorial, this will be the Arduino Nano 33 IOT, which advertises its IMU Data service and accepts a connecting from our laptop.
 
 Note that some BLE devices can act as multiple of these roles, depending on the context. For example, a smartphone may act as a central device when communicating with a smartwatch and also act as a peripheral when downloading a file from another smartphone.
+
+## Tutorial
+
+### Materials
+
+For this tutorial, you will need an `Arduino Nano 33 IOT` with USB Micro B cable and a laptop capable of BLE. We will be using the Arduino IDE.
+
+1. Open the boards manager (Tools->Board->Board Manager) and search for the Arduino Nano 33 IOT to find and download the appropriate board manager.
+2. Open the library manager (Tools->Manage Libraries) and searcxh for and download the `ArduinoBLE` and `Arduino_LSM6DS3` libraries.
+3. Now we will create a new sketch, and include these libraries and define some constants for the UUID of our service and characteristics:
+
+```cpp
+#include <ArduinoBLE.h>
+#include <Arduino_LSM6DS3.h>
+
+#define BLE_UUID_ACCELEROMETER_SERVICE "1101"
+#define BLE_UUID_ACCELEROMETER_X "2101"
+#define BLE_UUID_ACCELEROMETER_Y "2102"
+#define BLE_UUID_ACCELEROMETER_Z "2103"
+
+#define BLE_DEVICE_NAME "Nano33IOT"
+#define BLE_LOCAL_NAME "Nano33IOT"
+```
+
+4. We now create our service and define some floats that will later store the IMU data:
+
+```cpp
+BLEService accelerometerService(BLE_UUID_ACCELEROMETER_SERVICE);
+
+BLEFloatCharacteristic accelerometerCharacteristicX(BLE_UUID_ACCELEROMETER_X, BLERead | BLENotify);
+BLEFloatCharacteristic accelerometerCharacteristicY(BLE_UUID_ACCELEROMETER_Y, BLERead | BLENotify);
+BLEFloatCharacteristic accelerometerCharacteristicZ(BLE_UUID_ACCELEROMETER_Z, BLERead | BLENotify);
+
+float x, y, z;
+```
+
+5. We now define our setup function. In this function, we will initialize the IMU and BLE modules, add characteristics to our BLE service, add our service, and then adverttise our service after initialziing the data of each characteristic.
+
+```cpp
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  // initialize IMU
+  if (!IMU.begin())
+  {
+    Serial.println("Failed to initialize IMU!");
+    while (1)
+      ;
+  }
+
+  Serial.print("Accelerometer sample rate = ");
+  Serial.print(IMU.accelerationSampleRate());
+  Serial.println("Hz");
+
+  // initialize BLE
+  if (!BLE.begin())
+  {
+    Serial.println("Starting Bluetooth® Low Energy module failed!");
+    while (1)
+      ;
+  }
+
+  // set advertised local name and service UUID
+  BLE.setDeviceName(BLE_DEVICE_NAME);
+  BLE.setLocalName(BLE_LOCAL_NAME);
+  BLE.setAdvertisedService(accelerometerService);
+
+  accelerometerService.addCharacteristic(accelerometerCharacteristicX);
+  accelerometerService.addCharacteristic(accelerometerCharacteristicY);
+  accelerometerService.addCharacteristic(accelerometerCharacteristicZ);
+
+  BLE.addService(accelerometerService);
+
+  accelerometerCharacteristicX.writeValue(0);
+  accelerometerCharacteristicY.writeValue(0);
+  accelerometerCharacteristicZ.writeValue(0);
+
+  // start advertising
+  BLE.advertise();
+
+  Serial.println("BLE Accelerometer Peripheral");
+}
+```
+
+6. Finally, we will write our loop. In this loop, we will simply read the X, Y, and Z acceleraometer data from the IMU and write them to our characteristics accordingly:
+
+```cpp
+void loop()
+{
+  BLEDevice central = BLE.central();
+
+  if (IMU.accelerationAvailable())
+  {
+    digitalWrite(LED_BUILTIN, HIGH);
+    IMU.readAcceleration(x, y, z);
+
+    accelerometerCharacteristicX.writeValue(x);
+    accelerometerCharacteristicY.writeValue(y);
+    accelerometerCharacteristicZ.writeValue(z);
+  }
+  else
+  {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+}
+```
+
+7. Now we will simply upload this by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
+
+8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop.
+
