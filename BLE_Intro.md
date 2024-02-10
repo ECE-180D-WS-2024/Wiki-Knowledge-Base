@@ -26,7 +26,7 @@ The physical layer (PHY) refers to the physical radio used in BLE communication.
 
 The link layer is the layer above the physical layer, which is responsible for scanning, advertising, and creating and maintaining connections by managing its state.
 
-![Link Layer State Diagram](https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/JacobLevinson/Image1.png)
+![Link Layer State Diagram](https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/JacobLevinson/Image1.webp)
 
 ### Host Controller Interface
 
