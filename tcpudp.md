@@ -11,7 +11,10 @@ The TCP/IP model is part of every network domain to oversee transmission of data
 
 The application layer is responsible for understanding the type of data being used as they are the programs that use network services. Application types include Domain Name Service (DNS), File Transfer Protocol (FTP) and Hypertext Transfer Protocol (HTTP), among many others. The transport layer is responsible for establishing the end-to-end connection between the sender and the receiver while also deciding how to divide the data from the application to send in packets. The internet layer routes this packetized data based on Internet Protocol (the reason IP addresses assigned to each device) and ensures there is a path for the transmission. The network access layer is responsible for the actual transfer of the data through raw binary over the physical communication paths in the network channel [2]
 
-[INSERT PICTURES]
+<img src="https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/christophe/img1.png">
+<img src="https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/christophe/img2.png">
+<img src="https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/christophe/img3.png">
+<img src="https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/christophe/img4.png">
 
 The TCP/IP model involves communication between two parties, the client and the server. The interaction is that a client (often the user machine) is provided a service, like access to a file by a server in the network (another computer). When you type an address to a website (i.e https://www.youtube.com/) the browser first goes to the DNS server where it finds the IP address the website is, then the browser sends HTTP request message to the server to send a copy of the website to your device. After this, if the server approves the message it will send the client back an approval notice and then start to send small packets of data that your browser begins to assemble and display for you [3]. All of this is accomplished over the internet connection established by TCP/IP.
 
