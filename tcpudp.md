@@ -1,6 +1,6 @@
-##Understanding UDP vs. TCP for Network Programming: Structures, Applications, and Performance Considerations
+## Understanding UDP vs. TCP for Network Programming: Structures, Applications, and Performance Considerations
 
-#Introduction
+# Introduction
 
 When exploring online you may think that every website you visit or email you send is just part of the unlimited access that your device has to the internet. However, every digital interaction and byte of data transferred over a network has to abide by a working set of rules. The Transmission Control Protocol/Internet Protocol (TCP/IP) serves as this governance through a suite of communication protocols used to interconnect network devices on the internet [1]. This protocol involves the handling of how data is broken down, addressed, transmitted, routed and received over a network [1]. We will focus on comparing two protocols within the Transport Layer of TCP/IP— Transfer Control Protocol (TCP) and User Datagram Protocol (UDP). This examination will be both qualitative and technical through providing network theory along with insight into the data structures used. (coding guide for network programming in Python.)
 
