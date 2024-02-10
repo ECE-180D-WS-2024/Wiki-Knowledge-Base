@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Bluetooth Low Energy (BLE) [[1](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/)] is a short-range wireless technology standard focusing on low-power devices. While it may not have the data throughput or range of its predecessor, Bluetooth Classic, it excels at maintaining low power usage, enabling it to be used much more easily with mobile and IOT devices.
+Bluetooth Low Energy (BLE) [[1](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/)] is a short-range wireless technology standard focusing on low-power devices. While it may not have the data throughput or range of its predecessor, Bluetooth Classic, it excels at maintaining low power usage, enabling it to be used much more easily with mobile and IoT devices.
 
 In this article, we will explain the basics of BLE and give a small tutorial on using BLE to send the Interntial Measurement Unit (IMU) data from an `Arduino Nano 33 IOT` [[2](https://store-usa.arduino.cc/products/arduino-nano-33-iot)], a powerful, compact, and low-cost microcontroller board with a built-in IMU and wireless capabilities, to a laptop running `Node.js` using the library `Noble` [[3](https://www.npmjs.com/package/@abandonware/noble)], a BLE central controller module for javascript.
 
@@ -75,7 +75,7 @@ The different roles of a Bluetooth LE device are:
 + Broadcaster: a device that sends out Advertisements and does not receive packets or allow connections from others.
 + Observer: a device that listens to others sending out Advertising Packets but does not initiate a connection with an Advertising device.
 + Central: a device that discovers and listens to other devices that are Advertising, and can connect to the advertising device. In our tutorial, this will be our laptop, which receives the IMU data from the Arduino Nano 33 IOT.
-+ Peripheral: a device that Advertises and accepts Connections from Central devices. In our tutorial, this will be the Arduino Nano 33 IOT, which advertises its IMU Data service and accepts a connecting from our laptop.
++ Peripheral: a device that Advertises and accepts Connections from Central devices. In our tutorial, this will be the Arduino Nano 33 IOT, which advertises its IMU Accelerometer Data service and accepts a connecting from our laptop.
 
 Note that some BLE devices can act as multiple of these roles, depending on the context. For example, a smartphone may act as a central device when communicating with a smartwatch and also act as a peripheral when downloading a file from another smartphone.
 
@@ -114,52 +114,61 @@ BLEFloatCharacteristic accelerometerCharacteristicZ(BLE_UUID_ACCELEROMETER_Z, BL
 float x, y, z;
 ```
 
-5. We now define our setup function. In this function, we will initialize the IMU and BLE modules, add characteristics to our BLE service, add our service, and then adverttise our service after initialziing the data of each characteristic.
+5. We now define our setup function. In this function, we will initialize the IMU and BLE modules, add characteristics to our BLE service, add our service, and then advertise our service after initializing the data of each characteristic.
 
 ```cpp
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  // initialize IMU
-  if (!IMU.begin())
-  {
-    Serial.println("Failed to initialize IMU!");
-    while (1)
-      ;
-  }
 
-  Serial.print("Accelerometer sample rate = ");
-  Serial.print(IMU.accelerationSampleRate());
-  Serial.println("Hz");
+  // initialize IMU
+  if (!IMU.begin())
+  {
+    Serial.println("Failed to initialize IMU!");
+    while (1)
+      ;
+  }
 
-  // initialize BLE
-  if (!BLE.begin())
-  {
-    Serial.println("Starting Bluetooth® Low Energy module failed!");
-    while (1)
-      ;
-  }
 
-  // set advertised local name and service UUID
-  BLE.setDeviceName(BLE_DEVICE_NAME);
-  BLE.setLocalName(BLE_LOCAL_NAME);
-  BLE.setAdvertisedService(accelerometerService);
+  Serial.print("Accelerometer sample rate = ");
+  Serial.print(IMU.accelerationSampleRate());
+  Serial.println("Hz");
 
-  accelerometerService.addCharacteristic(accelerometerCharacteristicX);
-  accelerometerService.addCharacteristic(accelerometerCharacteristicY);
-  accelerometerService.addCharacteristic(accelerometerCharacteristicZ);
 
-  BLE.addService(accelerometerService);
+  // initialize BLE
+  if (!BLE.begin())
+  {
+    Serial.println("Starting Bluetooth® Low Energy module failed!");
+    while (1)
+      ;
+  }
 
-  accelerometerCharacteristicX.writeValue(0);
-  accelerometerCharacteristicY.writeValue(0);
-  accelerometerCharacteristicZ.writeValue(0);
 
-  // start advertising
-  BLE.advertise();
+  // set advertised local name and service UUID
+  BLE.setDeviceName(BLE_DEVICE_NAME);
+  BLE.setLocalName(BLE_LOCAL_NAME);
+  BLE.setAdvertisedService(accelerometerService);
 
-  Serial.println("BLE Accelerometer Peripheral");
+
+  accelerometerService.addCharacteristic(accelerometerCharacteristicX);
+  accelerometerService.addCharacteristic(accelerometerCharacteristicY);
+  accelerometerService.addCharacteristic(accelerometerCharacteristicZ);
+
+
+  BLE.addService(accelerometerService);
+
+
+  accelerometerCharacteristicX.writeValue(0);
+  accelerometerCharacteristicY.writeValue(0);
+  accelerometerCharacteristicZ.writeValue(0);
+
+
+  // start advertising
+  BLE.advertise();
+
+
+  Serial.println("BLE Accelerometer Peripheral");
 }
 ```
 
@@ -168,27 +177,113 @@ void setup()
 ```cpp
 void loop()
 {
-  BLEDevice central = BLE.central();
+  BLEDevice central = BLE.central();
 
-  if (IMU.accelerationAvailable())
-  {
-    digitalWrite(LED_BUILTIN, HIGH);
-    IMU.readAcceleration(x, y, z);
 
-    accelerometerCharacteristicX.writeValue(x);
-    accelerometerCharacteristicY.writeValue(y);
-    accelerometerCharacteristicZ.writeValue(z);
-  }
-  else
-  {
-    digitalWrite(LED_BUILTIN, LOW);
-  }
+  if (IMU.accelerationAvailable())
+  {
+    digitalWrite(LED_BUILTIN, HIGH);
+    IMU.readAcceleration(x, y, z);
+
+
+    accelerometerCharacteristicX.writeValue(x);
+    accelerometerCharacteristicY.writeValue(y);
+    accelerometerCharacteristicZ.writeValue(z);
+  }
+  else
+  {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
 }
 ```
 
 7. Now we will simply upload this by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
 
-8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop.
+8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop. Begin by installing `node.js` on your laptop.
+
+9. Create a directory, navigate to it, and run
+
+```sh
+npm init -y
+```
+
+10. Next install the noble module using
+
+```sh
+npm install @abandonware/noble
+```
+
+11. Now we will begin writing our node.js code. Create a file called `central.js` in the project directory. We will begin by requiring the noble moudle, and defining some constants to be used later:
+
+```js
+const noble = require('@abandonware/noble');
+
+
+const uuid_service = "1101"; // IMU Accelerometer Service UUID
+const uuid_values = ["2101", "2102", "2103"]; // Array of UUIDs for X, Y, and Z Axis characteristics
+
+
+let sensorValues = {};
+```
+
+12. Next we will define the function for when the program starts up and the state changes to "powered on". In this function we scan for the UUID of the IMU Accelerometer service from the Arduino Nano 33 IOT:
+
+```js
+noble.on('stateChange', async (state) => {
+    if (state === 'poweredOn') {
+        console.log("start scanning");
+        await noble.startScanningAsync([uuid_service], false);
+    }
+});
+```
+
+13. We also need to define the function for when the service is successfully discovered. In this function we will connect to the peripheral found, discover its characteristics, and then call a function called `readData` for each of the characteristics.
+
+```js
+noble.on('discover', async (peripheral) => {
+    await noble.stopScanningAsync();
+    await peripheral.connectAsync();
+    const { characteristics } = await peripheral.discoverSomeServicesAndCharacteristicsAsync([uuid_service], uuid_values);
+
+
+    // Read data for each characteristic
+    characteristics.forEach((characteristic) => {
+        readData(characteristic);
+    });
+});
+```
+
+14. Finally, we must define this `readData` function. In this function, we will read from the characteristic, console.log the value, and then set a timeout of 10 milliseconds for when to call readData once again. This way, our program is continuously reading new values from the IMU Accelerometer service:
+
+```js
+// read data periodically
+let readData = async (characteristic) => {
+    const value = (await characteristic.readAsync());
+    const uuid = characteristic.uuid;
+    sensorValues[uuid] = value.readFloatLE(0);
+    console.log(`Characteristic ${uuid}: ${sensorValues[uuid]}`);
+
+
+    // read data again in t milliseconds
+    setTimeout(() => {
+        readData(characteristic);
+    }, 10);
+}
+```
+
+15. Now that we have completed our node.js code, we can run it by typing in our terminal:
+
+```sh
+node central.js
+```
+
+16. We should now see a stream of accelerometer values from our Arduino Nano 33 IOT in our terminal!
+
+## Conclusion
+
+In this article, we've delved into the intricacies of Bluetooth Low Energy (BLE) through an exploration of its architecture and a practical tutorial on interfacing with an Arduino Nano 33 IoT with a laptop via Node.js. This exploration highlighted BLE's significance in IoT applications, emphasizing its low power consumption and efficient data transfer capabilities, which make it ideally suited for a wide range of applications, from wearable technology to home automation systems. The detailed tutorial provided a hands-on approach to utilizing BLE, showcasing the ease with which developers can implement BLE services and characteristics to facilitate seamless device-to-device communication.
+
+BLE is an important technology in the IoT landscape, enabling the development of innovative, energy-efficient solutions that enhance connectivity and interaction between devices. Through this concise overview and tutorial, we've illustrated BLE's potential to be utilized to enhance our daily lives with wireless connectivity. As IoT continues to evolve, BLE's role is undeniably pivotal, and previews a world where all our devices will be connected in an IoT.
 
 ## Sources
 
