@@ -30,7 +30,7 @@ The link layer is the layer above the physical layer, which is responsible for s
 
 ### Host Controller Interface
 
-The Host Controller Interface (HCI) layer is a standard protocol defined by the Bluetooth specification that allows the Host component to communicate with the Controller component. These components do not even necessarily exist inside the same chip, but often are for simplicity. The HCI can use an API or standard interfaces such as UART, SPI, or USB.
+The Host Controller Interface (HCI) layer is a standard protocol defined by the Bluetooth specification that allows the Host component to communicate with the Controller component. These components do not even necessarily exist inside the same chip, but they often are for simplicity. The HCI can use an API or standard interfaces such as UART, SPI, or USB.
 
 ### Logical Link Control and Adaptation Protocol (L2CAP)
 
@@ -48,11 +48,11 @@ There are two roles within GATT: **Server** and **Client**. The Server is the de
 
 A Client is the device that the server will send this data to. Note that a BLE device can act both as a Client and Server simultaneously.
 
-To understand the GATT, you need to understand Services and Characteristics. Services are a grouping of one or more Attributes (a generic term for any type of data exposed by the server). It groups together related information, for example IMU data.
+To understand the GATT, you need to understand Services and Characteristics. Services are a grouping of one or more Attributes (a generic term for any type of data exposed by the server). It groups together related information, for example, IMU data.
 
-A Characteristic is always part of a Service, which is a peice of the data associated with that service. For example, X-Axis Acceleration could be a characteristic of the IMU Data Service.
+A Characteristic is always part of a Service, which is a piece of data associated with that service. For example, X-Axis Acceleration could be a characteristic of the IMU Data Service.
 
-To interact with these characteristics, we can perfom operations on them. In BLE, there are six types of operations on Characteristics:
+To interact with these characteristics, we can perform operations on them. In BLE, there are six types of operations on Characteristics:
 
 1. Commands
 2. Requests
@@ -67,14 +67,14 @@ The Generic Access Profile (GAP) provides a framework that defines how BLE devic
 
 + Roles of BLE devices
 + Advertisements (Broadcasting, Discovery, Advertisement parameters, Advertisement data)
-+ Connection establishment (initiating connections, accepting connections, Connection parameters)
++ Connection establishment (initiating connections, accepting connections, connection parameters)
 + Security
 
 The different roles of a Bluetooth LE device are:
 
 + Broadcaster: a device that sends out Advertisements and does not receive packets or allow connections from others.
 + Observer: a device that listens to others sending out Advertising Packets but does not initiate a connection with an Advertising device.
-+ Central: a device that discovers and listens to other devices that are Advertising, and can connect to the advertising device. In our tutorial, this will be our laptop which recieves the IMu data from the Arduino Nano 33 IOT.
++ Central: a device that discovers and listens to other devices that are Advertising, and can connect to the advertising device. In our tutorial, this will be our laptop, which receives the IMU data from the Arduino Nano 33 IOT.
 + Peripheral: a device that Advertises and accepts Connections from Central devices. In our tutorial, this will be the Arduino Nano 33 IOT, which advertises its IMU Data service and accepts a connecting from our laptop.
 
-Note that some BLE devices can act as multiple of these roles depending on the contex. For ewxample, a smartphone may act as a Central device when communicating with a smartwatch and also act as a peripheral when downloading a file from another smartphone.
+Note that some BLE devices can act as multiple of these roles, depending on the context. For example, a smartphone may act as a central device when communicating with a smartwatch and also act as a peripheral when downloading a file from another smartphone.
