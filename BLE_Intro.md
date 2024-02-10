@@ -190,3 +190,14 @@ void loop()
 
 8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop.
 
+## Sources
+
+[1] <https://www.bluetooth.com/learn-about-bluetooth/tech-overview/>
+
+[2] <https://store-usa.arduino.cc/products/arduino-nano-33-iot>
+
+[3] <https://www.npmjs.com/package/@abandonware/noble>
+
+[4] <https://www.bluetooth.com/learn-about-bluetooth/tech-overview/>
+
+[5] <https://www.rfwireless-world.com/Terminology/BLE-Protocol-Stack-Architecture.html>
