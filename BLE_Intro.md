@@ -86,7 +86,7 @@ Note that some BLE devices can act as multiple of these roles, depending on the 
 For this tutorial, you will need an `Arduino Nano 33 IOT` with USB Micro B cable and a laptop capable of BLE. We will be using the Arduino IDE.
 
 1. In the Arduino IDE, open the boards manager (Tools->Board->Board Manager) and search for the Arduino Nano 33 IOT to find and download the appropriate board manager.
-2. Open the library manager (Tools->Manage Libraries) and searcxh for and download the `ArduinoBLE` and `Arduino_LSM6DS3` libraries.
+2. Open the library manager (Tools->Manage Libraries) and search for and download the `ArduinoBLE` and `Arduino_LSM6DS3` libraries.
 3. Now we will create a new sketch, and include these libraries and define some constants for the UUID of our service and characteristics:
 
 ```cpp
