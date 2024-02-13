@@ -18,7 +18,7 @@ The BLE architecture is based on a layered protocol, where each layer relies on 
 
 Although layers beneath the Security Manager and Attribute Protocol layers are not necessary to understand for users of the BLE protocol, we will touch on them briefly as well for completeness sake.
 
-### Physical Layer
+### Physical Layer (PHY)
 
 The physical layer (PHY) refers to the physical radio used in BLE communication. BLE uses the 2.4GHz ISM band (2.402–2.480 GHz utilized), consisting of 40 channels with 2 MHz spacing as well as a frequency-hopping transceiver.
 
@@ -28,7 +28,7 @@ The link layer is the layer above the physical layer, which is responsible for s
 
 ![Link Layer State Diagram](https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/JacobLevinson/Image1.webp)
 
-### Host Controller Interface
+### Host Controller Interface (HCI)
 
 The Host Controller Interface (HCI) layer is a standard protocol defined by the Bluetooth specification that allows the Host component to communicate with the Controller component. These components do not even necessarily exist inside the same chip, but they often are for simplicity. The HCI can use an API or standard interfaces such as UART, SPI, or USB.
 
@@ -36,7 +36,7 @@ The Host Controller Interface (HCI) layer is a standard protocol defined by the 
 
 The Logical Link Control and Adaptation Protocol (L2CAP) layer acts as a protocol multiplexing layer. It takes multiple protocols from the upper layers and places them in standard BLE packets for the lower layers. This data encapuslation allows the above layers to use BLE with an easy abstraction.
 
-### Attribute Protocol
+### Attribute Protocol (ATT)
 
 The Attribute Protocol (ATT) defines how a BLE device can expose data or attributes.
 
