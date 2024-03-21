@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Bluetooth Low Energy (BLE) [[1](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/)] is a short-range wireless technology standard focusing on low-power devices. While it may not have the data throughput or range of its predecessor, Bluetooth Classic, it excels at maintaining low power usage, enabling it to be used much more easily with mobile and IoT devices.
+Unlocking the potential of smart devices and IoT applications starts with mastering Bluetooth Low Energy (BLE). Bluetooth Low Energy (BLE) [[1](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/)] is a short-range wireless technology standard focusing on low-power devices. While it may not have the data throughput or range of its predecessor, Bluetooth Classic, it excels at maintaining low power usage, enabling it to be used much more easily with mobile and IoT devices.
 
 In this article, we will explain the basics of BLE and give a small tutorial on using BLE to send the Interntial Measurement Unit (IMU) data from an `Arduino Nano 33 IOT` [[2](https://store-usa.arduino.cc/products/arduino-nano-33-iot)], a powerful, compact, and low-cost microcontroller board with a built-in IMU and wireless capabilities, to a laptop running `Node.js` using the library `Noble` [[3](https://www.npmjs.com/package/@abandonware/noble)], a BLE central controller module for javascript.
 
@@ -10,39 +10,39 @@ In this article, we will explain the basics of BLE and give a small tutorial on 
 
 ### Architecture
 
-The BLE architecture is based on a layered protocol, where each layer relies on the abstractions provided by the layers under it. These layers are generally grouped into 3 components: **application**, **host**, and **controller**.
+The BLE architecture is based on a layered protocol, where each layer relies on the abstractions provided by the layers under it. These layers are generally grouped into 3 components: **application**, **host**, and **controller**. These layers separate functionality, enhance modularity, interoperability, and power efficiency, making BLE adaptable for various low-power wireless device applications. 
 
 ![Bluetooth Low Energy Protocol Architecture](https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/JacobLevinson/Image0.png)
 
 ### BLE Protocol Layers
 
-Although layers beneath the Security Manager and Attribute Protocol layers are not necessary to understand for users of the BLE protocol, we will touch on them briefly as well for completeness sake.
+Although layers beneath the Security Manager and Attribute Protocol layers are not necessary to understand for users of the BLE protocol, we will touch on them briefly as well for completeness sake. By understanding the lower layers first, the abstractions above become more intuitive.
 
 ### Physical Layer (PHY)
 
-The physical layer (PHY) refers to the physical radio used in BLE communication. BLE uses the 2.4GHz ISM band (2.402–2.480 GHz utilized), consisting of 40 channels with 2 MHz spacing as well as a frequency-hopping transceiver.
+The physical layer (PHY) refers to the physical radio used in BLE communication. BLE uses the 2.4GHz ISM band (2.402–2.480 GHz utilized), consisting of 40 channels with 2 MHz spacing as well as a frequency-hopping transceiver. Clearly, some software is needed to interact with the physcial layer.
 
 ### Link Layer
 
-The link layer is the layer above the physical layer, which is responsible for scanning, advertising, and creating and maintaining connections by managing its state.
+The link layer is the layer above the physical layer, which is responsible for scanning, advertising, and creating and maintaining connections by managing its state. Details like internal state are not typically exposed to users in most systems, so some method of communicating with to link layer to send/receieve commands is needed.
 
 ![Link Layer State Diagram](https://github.com/ECE-180D-WS-2024/Wiki-Knowledge-Base/blob/main/Images/JacobLevinson/Image1.webp)
 
 ### Host Controller Interface (HCI)
 
-The Host Controller Interface (HCI) layer is a standard protocol defined by the Bluetooth specification that allows the Host component to communicate with the Controller component. These components do not even necessarily exist inside the same chip, but they often are for simplicity. The HCI can use an API or standard interfaces such as UART, SPI, or USB.
+The Host Controller Interface (HCI) layer is a standard protocol defined by the Bluetooth specification that allows the Host component to communicate with the Controller component. These components do not even necessarily exist inside the same chip, but they often are for simplicity. The HCI can use an API or standard interfaces such as UART, SPI, or USB. The HCI allows for implementation agnostic communication and control of BLE by a device, but multipule types of data/connections are not directly supported here. Thus, we need a layer to translate the multitude of data and protocol types into this standard HCI.
 
 ### Logical Link Control and Adaptation Protocol (L2CAP)
 
-The Logical Link Control and Adaptation Protocol (L2CAP) layer acts as a protocol multiplexing layer. It takes multiple protocols from the upper layers and places them in standard BLE packets for the lower layers. This data encapuslation allows the above layers to use BLE with an easy abstraction.
+The Logical Link Control and Adaptation Protocol (L2CAP) layer acts as a protocol multiplexing layer. It takes multiple protocols from the upper layers and places them in standard BLE packets for the lower layers. This data encapuslation allows the above layers to use BLE with an easy abstraction, without worrying about the true BLE standards.
 
 ### Attribute Protocol (ATT)
 
-The Attribute Protocol (ATT) defines how a BLE device can expose data or attributes.
+The Attribute Protocol (ATT) defines how a BLE device can expose data or attributes, and the methods of how to do so. However, it isn't very convinient to access these individual attributes.
 
 ### Generic Attribute Profile (GATT)
 
-The Generic Attribute Profile (GATT) defines the format of the data exposed by a BLE device. It also defines the procedures needed to access the data exposed by a device.
+The Generic Attribute Profile (GATT) defines the format of the data exposed by a BLE device. It also defines the procedures needed to access the data exposed by a device. The GATT allows the ATT attributes to be group into services and characteristics, organizing the data for easy access.
 
 There are two roles within GATT: **Server** and **Client**. The Server is the device that exposes the data it would like to share or send. This data could be actual payload data (i.e., packets of an MP3 file, sensor data) or information about the device itself (i.e., battery level, device name).
 
@@ -79,7 +79,13 @@ The different roles of a Bluetooth LE device are:
 
 Note that some BLE devices can act as multiple of these roles, depending on the context. For example, a smartphone may act as a central device when communicating with a smartwatch and also act as a peripheral when downloading a file from another smartphone.
 
+When interacting with BLE via code with an API or library, you are primarily interacting with the GATT (Generic Attribute Profile) for data exchange between devices and the GAP (Generic Access Profile), which is involved in establishing connections and advertising roles. These abstractions allow for extrememly simple logic design while allowing for maximum versatility. Following along with the following tutorial will help demonstrate the power and ease of use of BLE.
+
+
+
 ## Tutorial
+
+The following tutorial will walk through the implementation of sending accelerometer IMU data from an Arduino to a latpop using BLE. This could then be used for a wide variety applications, including motion tracking, gesture recognition, and enhancing interactive experiences in gaming or virtual reality environments due to its low power and low latency data transfer.
 
 ### Materials
 
@@ -87,7 +93,7 @@ For this tutorial, you will need an `Arduino Nano 33 IOT` with USB Micro B cable
 
 1. In the Arduino IDE, open the boards manager (Tools->Board->Board Manager) and search for the Arduino Nano 33 IOT to find and download the appropriate board manager.
 2. Open the library manager (Tools->Manage Libraries) and search for and download the `ArduinoBLE` and `Arduino_LSM6DS3` libraries.
-3. Now we will create a new sketch, and include these libraries and define some constants for the UUID of our service and characteristics:
+3. Create a new sketch, and include these libraries and define some constants for the UUID of our service and characteristics:
 
 ```cpp
 #include <ArduinoBLE.h>
@@ -114,7 +120,7 @@ BLEFloatCharacteristic accelerometerCharacteristicZ(BLE_UUID_ACCELEROMETER_Z, BL
 float x, y, z;
 ```
 
-5. We now define our setup function. In this function, we will initialize the IMU and BLE modules, add characteristics to our BLE service, add our service, and then advertise our service after initializing the data of each characteristic.
+5. Every arduino sketch has a setup function. In this function, we will initialize the IMU and BLE modules, add characteristics to our BLE service, add our service, and then advertise our service after initializing the data of each characteristic. This way, any device nearby will be able to probe this device and discover the accelerometer service and the 3 characteristics associated with it.
 
 ```cpp
 void setup()
@@ -172,7 +178,7 @@ void setup()
 }
 ```
 
-6. Finally, we will write our loop. In this loop, we will simply read the X, Y, and Z acceleraometer data from the IMU and write them to our characteristics accordingly:
+6. Every arduino sketch also has a main loop. In our loop, we will simply read the X, Y, and Z acceleraometer data from the IMU and write them to our characteristics accordingly:
 
 ```cpp
 void loop()
@@ -197,23 +203,23 @@ void loop()
 }
 ```
 
-7. Now we will upload this by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
+7. Upload this sketch to your arduino by first selecting the correct board (Tools->Board->Arduino SAMD->Arduino Nano 33 IOT), selecting the correct COM port (Tools->Port) and then clicking the right facing arrow in the top-left to upload the sketch.
 
-8. Now that we have completed the peripheral side, we will need to create the controller side on for the laptop. Begin by installing `node.js` on your laptop.
+8. After completing the peripheral side, we will need to create the controller side on for the laptop. Begin by installing `node.js` on your laptop.
 
-9. Create a directory, navigate to it, and run
+9. Create a directory for this node project, navigate to it, and initialize it by running
 
 ```sh
 npm init -y
 ```
 
-10. Next install the noble module using
+10. The library we will use for BLE is called Noble. Install the noble module using
 
 ```sh
 npm install @abandonware/noble
 ```
 
-11. Now we will begin writing our node.js code. Create a file called `central.js` in the project directory. We will begin by requiring the noble module, and defining some constants to be used later:
+11. Create a file called `central.js` in the project directory. Our laptop will act as the central controller. We will begin by requiring the noble module, and defining some constants to be used later:
 
 ```js
 const noble = require('@abandonware/noble');
@@ -226,7 +232,7 @@ const uuid_values = ["2101", "2102", "2103"]; // Array of UUIDs for X, Y, and Z 
 let sensorValues = {};
 ```
 
-12. Next we will define the function for when the program starts up and the state changes to "powered on". In this function we scan for the UUID of the IMU Accelerometer service from the Arduino Nano 33 IOT:
+12. We need to define the function for when the program starts up and the BLE state changes to "powered on". In this function we scan for the UUID of the IMU Accelerometer service from the Arduino Nano 33 IOT:
 
 ```js
 noble.on('stateChange', async (state) => {
@@ -271,19 +277,19 @@ let readData = async (characteristic) => {
 }
 ```
 
-15. Now that we have completed our node.js code, we can run it by typing in our terminal:
+15. Now we can run our central code by typing in our terminal:
 
 ```sh
 node central.js
 ```
 
-16. We should now see a stream of accelerometer values from our Arduino Nano 33 IOT in our terminal!
+16. Ensure the Arduino is also still powered on. We should now see a stream of accelerometer values from our Arduino Nano 33 IOT in our terminal!
 
 ## Conclusion
 
-In this article, we've delved into the intricacies of Bluetooth Low Energy (BLE) through an exploration of its architecture and a practical tutorial on interfacing with an Arduino Nano 33 IoT with a laptop via Node.js. This exploration highlighted BLE's significance in IoT applications, emphasizing its low power consumption and efficient data transfer capabilities, which make it ideally suited for a wide range of applications, from wearable technology to home automation systems. The detailed tutorial provided a hands-on approach to utilizing BLE, showcasing the ease with which developers can implement BLE services and characteristics to facilitate seamless device-to-device communication.
+We have now delved into the intricacies of Bluetooth Low Energy (BLE) through an exploration of its architecture and a practical tutorial on interfacing with an Arduino Nano 33 IoT with a laptop via Node.js. This exploration highlighted BLE's significance in IoT applications, emphasizing its low power consumption and efficient data transfer capabilities, which make it ideally suited for a wide range of applications, from wearable technology to home automation systems. The detailed tutorial provided a hands-on approach to utilizing BLE, showcasing the ease with which developers can implement BLE services and characteristics to facilitate seamless device-to-device communication.
 
-BLE is an important technology in the IoT landscape, enabling the development of innovative, energy-efficient solutions that enhance connectivity and interaction between devices. Through this concise overview and tutorial, we've illustrated BLE's potential to be utilized to enhance our daily lives with wireless connectivity. As IoT continues to evolve, BLE's role is undeniably pivotal, and previews a world where all our devices will be connected in an IoT.
+BLE is an important technology in the IoT landscape, enabling the development of innovative, energy-efficient solutions that enhance connectivity and interaction between devices. Have have illustrated BLE's potential to be utilized to enhance our daily lives with wireless connectivity. As IoT continues to evolve, BLE's role is undeniably pivotal, and previews a world where all our devices will be connected in an IoT.
 
 ## Sources
 
